@@ -131,8 +131,55 @@ function laadMedewerkers() {
     }
         document.getElementById("medewerkers-outer").innerHTML = string1;
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/medewerkers/", true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/medewerkers/", true);
 
+    xhr.send();
+}
+
+
+function laadSingleOpdrachtgeverAddContactpersoon(id) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+        var inhoudDB = JSON.parse(this.responseText);
+        var opdrachtgeverId = id;
+        var string1 = `
+        <div class="popup-wrapper">
+            <h2>Contactpersoon toevoegen</h2>
+            <form id="contactpersoon-toevoegen" name="contactpersoon-toevoegen" class="popup-form">
+                <div class="form-rows-wrapper">
+                    <div class="form-flex">
+                        <div class="form-item">
+                            <label for="contactpersoon-add-voornaam" class="label form-label">Voornaam</label>
+                            <input type="text" class="text-field" maxlength="256" name="voornaam" data-name="voornaam" id="contactpersoon-add-voornaam">
+                        </div>
+                        <div class="form-item">
+                            <label for="contactpersoon-add-achternaam" class="label form-label">Achternaam</label>
+                            <input type="text" class="text-field" maxlength="256" name="achternaam" data-name="achternaam" id="contactpersoon-add-achternaam">
+                        </div>
+                    </div>
+                    <div class="form-flex">
+                        <div class="form-item">
+                            <label for="contactpersoon-add-email" class="label form-label">Email</label>
+                            <input type="text" class="text-field" maxlength="256" name="email" data-name="email" id="contactpersoon-add-email" required="">
+                        </div>
+                        <div class="form-item">
+                            <label for="contactpersoon-add-telefoonnummer" class="label form-label">Telefoonnummer</label>
+                            <input type="text" class="text-field" maxlength="256" name="telefoonnummer" data-name="Telefoonnummer" id="contactpersoon-add-telefoonnummer" required="">
+                        </div>
+                    </div>
+                    <input type="hidden"  id="contactpersoon-add-opdrachtgeverid" required="" value="">
+                </div>
+                <div class="popup-form-buton-wrapper">
+                    <input type="button" value="Toevoegen" data-wait="Please wait..." class="button accent-1" onclick="addContactpersoonToDB(${opdrachtgeverId})">
+                </div>
+            </form>
+            <div onclick="closeGebruikerPopup()" class="close-button"></div>
+        </div>
+        `;
+
+        document.getElementById("admin-contactpersoon-toevoegen").innerHTML = string1;
+    }
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/opdrachtgevers/" + id, true);
     xhr.send();
 }
 
@@ -258,7 +305,7 @@ function laadSingleMedewerker(id) {
 
         document.getElementById("admin-dashboard-medewerker-single").innerHTML = string1;
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/medewerkers/" + id, true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/medewerkers/" + id, true);
     xhr.send();
 }
 
@@ -329,7 +376,7 @@ function laadSingleMedewerkerWijzigen(id) {
         
     }
 
-    xhr.open("GET","http://173.212.208.199:9100/api/medewerkers/" + id, true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/medewerkers/" + id, true);
     xhr.send();
 }
 
@@ -347,7 +394,7 @@ function AddMedewerkerLaadOpdrachtgeversSelect() {
         }
         document.getElementById("add-medewerker-opdrachtgever-select").innerHTML = string1;
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/opdrachtgevers/", true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100//api/opdrachtgevers/", true);
     xhr.send();
 }
 
@@ -365,7 +412,7 @@ function laadOpdrachtgeversSelect(id, naam) {
         }
         document.getElementById("koppel-medewerker-opdrachtgever-change").innerHTML = string1;
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/opdrachtgevers/", true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/", true);
     xhr.send();
 }
 
@@ -417,10 +464,9 @@ function laadSingleOpdrachtgeverWijzigen(id) {
         <div onclick="closeGebruikerPopup()" class="close-button"></div>
     </div>
         `;
-
         document.getElementById("admin-dashboard-opdrachtgever-wijzigen").innerHTML = string1;
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/opdrachtgevers/" + id, true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/" + id, true);
     xhr.send();
 }
 
@@ -434,7 +480,7 @@ function laadSingleOpdrachtgever(id) {
         <h1 class="h1 no-margin">${inhoudDB.bedrijfsnaam}</h1>
     </div>
     <div class="medewerker-header-tools">
-        <div class="header-add-button">
+        <div onclick="openGebruikerPopup('admin-contactpersoon-toevoegen'); laadSingleOpdrachtgeverAddContactpersoon(${inhoudDB.id})" class="header-add-button">
             <img src="../img/plus-green.svg" alt="" class="add-icon">
             <div class="inline-link">Contactpersoon</div>
         </div>
@@ -481,7 +527,7 @@ function laadSingleOpdrachtgever(id) {
             </div>
         </div>
         <!-- Contacpersonen bij deze opdrachtgever -->
-        <div class="content-section">
+        <div id="contactpersonen-opdrachtgever-overzicht" class="content-section">
             <h2>Contactpersonen</h2>
             <div class="gebruiker-gegevens-flex">
                 <div class="flex-item-block">
@@ -501,7 +547,7 @@ function laadSingleOpdrachtgever(id) {
                     </div>
                 </div>
                 <div class="flex-item-block add-button-block">
-                    <div class="circle-button add-button small-circle-button"></div>
+                    <div class="circle-button add-button small-circle-button" onclick="openGebruikerPopup('admin-contactpersoon-toevoegen'); laadSingleOpdrachtgeverAddContactpersoon(${inhoudDB.id})"></div>
                 </div>
             </div>
         </div>
@@ -555,12 +601,56 @@ function laadSingleOpdrachtgever(id) {
     </div>
 </div>
         `;
-
         document.getElementById("admin-dashboard-opdrachtgever-single").innerHTML = string1;
+        laadContactpersonenVanOpdrachtgever(id)
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/opdrachtgevers/" + id, true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/" + id, true);
     xhr.send();
 }
+
+
+function laadContactpersonenVanOpdrachtgever(id) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+        var inhoudDB = JSON.parse(this.responseText);
+        var opdrachtgeverId = id;
+        var contactpersonen = "";
+        var string1 = ""
+        for (x=0; x<inhoudDB.length; x++) {
+            contactpersonen += 
+            `
+            <div class="flex-item-block">
+                <div class="contactpersoon-item-header-flex">
+                    <div class="gebruiker-img-circle margin-right"></div>
+                    <h3 class="no-margin">${inhoudDB[x].voornaam} ${inhoudDB[x].achternaam}</h3>
+                </div>
+                <div class="block-items-flex">
+                    <div class="gegevens-item">
+                        <div class="label">Emailadres</div>
+                        <div class="paragraph-content">${inhoudDB[x].email}</div>
+                    </div>
+                    <div class="gegevens-item">
+                        <div class="label">Telefoon</div>
+                        <div class="paragraph-content">${inhoudDB[x].telefoonNummer}</div>
+                    </div>
+                </div>
+            </div>`;
+        }
+        string1 += `
+        <h2>Contactpersonen</h2>
+            <div class="gebruiker-gegevens-flex">
+                ${contactpersonen}
+                <div class="flex-item-block add-button-block">
+                   <div class="circle-button add-button small-circle-button" onclick="openGebruikerPopup('admin-contactpersoon-toevoegen'); laadSingleOpdrachtgeverAddContactpersoon(${opdrachtgeverId})"></div>
+                </div>
+            </div>
+        `
+        document.getElementById("contactpersonen-opdrachtgever-overzicht").innerHTML = string1;
+    }
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/contactpersonen/opdrachtgever/" + id, true);
+    xhr.send();
+}
+
 
 function laadOpdrachtgevers() {
     var xhr = new XMLHttpRequest();
@@ -594,7 +684,7 @@ function laadOpdrachtgevers() {
             }
         document.getElementById("opdrachtgevers-outer").innerHTML = string1;
     }
-    xhr.open("GET","http://173.212.208.199:9100/api/opdrachtgevers/", true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/", true);
     xhr.send();
 }
 
@@ -625,18 +715,18 @@ function addMedewerkertoDB(){
         laadMedewerkers();
         closeGebruikerPopup();
     }
-    xhr.open("PUT","http://173.212.208.199:9100/api/medewerkers/maakMedewerkerenKoppelOpdrachtgever/" + vWerkgeverId,true);
+    xhr.open("PUT","https://api.qienurenapp.privatedns.org:9100//api/medewerkers/maakMedewerkerenKoppelOpdrachtgever/" + vWerkgeverId,true);
     xhr.setRequestHeader("Content-type","application/json")
     xhr.send(abc);
  }
 
  function addOpdrachtgeverToDB(){
-    var url = "http://173.212.208.199:9100/api/opdrachtgevers/";
+    var url = "https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/";
     var opdrachtgever = {
         bedrijfsnaam : document.getElementById('bedrijfsnaam').value,
         adres : document.getElementById('adresOG').value,
         email : document.getElementById('emailOG').value,
-        telefoonnummer : document.getElementById('telefoonnummerOG').value, 
+        telefoonNummer : document.getElementById('telefoonnummerOG').value, 
         plaats : document.getElementById('plaatsOG').value, 
         postcode : document.getElementById('postcodeOG').value, 
     };
@@ -651,10 +741,28 @@ function addMedewerkertoDB(){
     xhr.send(json);
 }
 
+function addContactpersoonToDB(id){
+    var contactpersoon = {
+        voornaam : document.getElementById('contactpersoon-add-voornaam').value,
+        achternaam : document.getElementById('contactpersoon-add-achternaam').value,
+        email : document.getElementById('contactpersoon-add-email').value,
+        telefoonNummer : document.getElementById('contactpersoon-add-telefoonnummer').value,
+    };
+    var json = JSON.stringify(contactpersoon);
+    var xhr = new XMLHttpRequest();                     // AJAX
+    xhr.onreadystatechange = function() {               // readystate (0 t/m 4), methode gebeurt 4x
+        laadSingleOpdrachtgever(id)
+        closeGebruikerPopup();
+    }
+    xhr.open("POST","http://https://api.qienurenapp.privatedns.org:9100/api/contactpersonen/" + id, true);    // asynchroon betekent tegelijkertijd. Synchroon is afgestemd
+    xhr.setRequestHeader("Content-type","application/json");
+    xhr.send(json);
+}
+
 // delete functies
 function verwijderMedewerker(id) {
     // var UIP = document.getElementById('userInputDeleteMedewerker').value;
-    var url = "http://173.212.208.199:9100/api/medewerkers/";
+    var url = "https://api.qienurenapp.privatedns.org:9100/api/medewerkers/";
     var xhr = new XMLHttpRequest();
 
     xhr.open("DELETE", url+id, true);
@@ -673,7 +781,7 @@ function verwijderMedewerker(id) {
 }
 
 function verwijderOpdrachtgever(id) {
-    var url = "http://173.212.208.199:9100/api/opdrachtgevers/";
+    var url = "https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/";
     var xhr = new XMLHttpRequest();
 
     xhr.open("DELETE", url+id, true);
@@ -700,7 +808,7 @@ window.onload = function() {
 
 // change functies
 function changeMedewerker(id) {
-    var url = "http://173.212.208.199:9100/api/medewerkers/";
+    var url = "https://api.qienurenapp.privatedns.org:9100/api/medewerkers/";
     var persoon = {
         voornaam : document.getElementById('voornaam-change').value,
         achternaam : document.getElementById('achternaam-change').value,
@@ -731,12 +839,12 @@ function changeMedewerker(id) {
 }
 
 function changeOpdrachtgever(id) {
-    var url = "http://173.212.208.199:9100/api/opdrachtgevers/";
+    var url = "https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/";
     var opdrachtgever = {
         bedrijfsnaam : document.getElementById('bedrijfsnaam-change').value,
         adres : document.getElementById('adresOG-change').value,
         email : document.getElementById('emailOG-change').value,
-        telefoonnummer : document.getElementById('telefoonnummerOG-change').value, 
+        telefoonNummer : document.getElementById('telefoonnummerOG-change').value, 
         plaats : document.getElementById('plaatsOG-change').value, 
         postcode : document.getElementById('postcodeOG-change').value, 
         // wachtwoordHash : 
@@ -764,7 +872,7 @@ function changeOpdrachtgever(id) {
 // koppelen
 function addOGToMW(id) {
     var opdrachtgeverId = document.getElementById('koppel-medewerker-opdrachtgever-change').value;
-    var url = "http://173.212.208.199:9100/api/medewerkers/opdrachtgever/" + id + "/" + opdrachtgeverId;
+    var url = "https://api.qienurenapp.privatedns.org:9100/api/medewerkers/opdrachtgever/" + id + "/" + opdrachtgeverId;
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){
 
@@ -772,7 +880,3 @@ function addOGToMW(id) {
     xhr.open("GET", url, true);
     xhr.send();
 }
-
-
-
-// ============================ MEDEWERKER JS =============================

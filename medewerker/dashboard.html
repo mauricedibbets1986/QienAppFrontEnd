@@ -10,7 +10,72 @@
     <link href="../css/main-components.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <div class="app-wrapper">
+    <div id="medewerker-app-wrapper" class="app-wrapper">
+ 
+    </div>
+    <!--  JS LINKS HERE  -->
+    <script>
+        var username = localStorage.qienusername;
+        var password = localStorage.qienpassword;
+        window.onload = start();
+
+        function start() {
+            alert(localStorage.qienusername);
+            laadMedewerkerDashboard();
+        }
+
+        xhr.onreadystatechange = function(){
+
+if (xhr.readyState === XMLHttpRequest.DONE) {
+
+    if (xhr.status === 'OK' || (xhr.status >= 200 && xhr.status < 400)) {
+
+        var inhoudDB = JSON.parse(this.responseText);
+        console.log("VERSTUREN GELUKT!");
+
+        if (inhoudDB.gebruikerType === "Medewerker") {
+            console.log("Je bent een medewerker.");
+            window.location.href = 'medewerker/dashboard.html';
+        } else if (inhoudDB.gebruikerType === "Admin") {
+            console.log("Je bent een admin.");
+            window.location.href = 'admin/dashboard.html';
+
+        } else {
+            alert("who are you?");
+        }
+
+    } else {
+        console.log("VERSTUREN IS NIET GELUKT!");
+        alert("emailadres of wachtwoord is onjuist");
+    }
+}
+}
+
+        function laadMedewerkerDashboard() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 'OK' || (xhr.status >= 200 && xhr.status < 400)) {
+                    var inhoudDB = JSON.parse(this.responseText);
+                    console.log("Ophalen gelukt");
+                    if (inhoudDB.gebruikerType === "Medewerker") {
+                        console.log("Je bent een medewerker");
+
+                    } else if (inhoudDB.gebruikerType === "Admin") {
+                        console.log("Je bent een admin.");
+                        window.location.href = 'admin/dashboard.html';
+                    } else {
+                        console.log("Geen idee wie je bent");
+                        window.location.href = '../login.html';
+                    }
+                } else {
+                    console.log("VERSTUREN IS NIET GELUKT!");
+                    window.location.href = '../login.html';
+            }
+        }
+
+                var string1 = ""
+                string1 += `
         <!--  MEDEWERKER NAVBAR  -->
         <div class="navbar">
             <div class="nav-containerr">
@@ -55,7 +120,7 @@
                             <div class="main-header-flex">
                                 <div class="gebruiker-header">
                                     <div class="gebruiker-single-img-circle"></div>
-                                    <h1 class="h1 no-margin">Michiel Janssens</h1>
+                                    <h1 class="h1 no-margin">${inhoudDB.voornaam} ${inhoudDB.achternaam}</h1>
                                 </div>
                                 <div onclick="openGebruikerPopup('gebruiker-zichzelf-aanpassen')" class="circle-button"></div>
                             </div>
@@ -73,19 +138,19 @@
                                                 </div>
                                                 <div class="gegevens-item">
                                                     <div class="label">Voornaam</div>
-                                                    <div class="paragraph-content">Paul</div>
+                                                    <div class="paragraph-content">${inhoudDB.voornaam}</div>
                                                 </div>
                                                 <div class="gegevens-item">
                                                     <div class="label">Achternaam</div>
-                                                    <div class="paragraph-content">van Veen</div>
+                                                    <div class="paragraph-content">${inhoudDB.achternaam}</div>
                                                 </div>
                                                 <div class="gegevens-item">
                                                     <div class="label">Adres</div>
-                                                    <div class="paragraph-content">Steenstraat 12</div>
+                                                    <div class="paragraph-content">${inhoudDB.adres}</div>
                                                 </div>
                                                 <div class="gegevens-item">
                                                     <div class="label">Plaatsnaam</div>
-                                                    <div class="paragraph-content">Harderwijk</div>
+                                                    <div class="paragraph-content">${inhoudDB.plaats}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -94,11 +159,11 @@
                                             <div class="block-items-flex">
                                             <div class="gegevens-item">
                                                 <div class="label">E-mailadres</div>
-                                                <div class="paragraph-content">paul@qien.nl</div>
+                                                <div class="paragraph-content">${inhoudDB.email}</div>
                                             </div>
                                             <div class="gegevens-item">
                                                 <div class="label">Telefoonnummer</div>
-                                                <div class="paragraph-content">0612345678</div>
+                                                <div class="paragraph-content">${inhoudDB.telefoonNummer}</div>
                                             </div>
                                             </div>
                                         </div>
@@ -107,11 +172,11 @@
                                             <div class="block-items-flex">
                                                 <div class="gegevens-item">
                                                     <div class="label">Bedrijf</div>
-                                                    <div class="paragraph-content">Qien</div>
+                                                    <div class="paragraph-content">${inhoudDB.opdrachtgever.bedrijfsnaam}</div>
                                                 </div>
                                                 <div class="gegevens-item">
                                                     <div class="label">Datum in dienst</div>
-                                                    <div class="paragraph-content">12-01-2016</div>
+                                                    <div class="paragraph-content">${inhoudDB.opdrachtgever.datimInDienst}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -153,7 +218,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="medewerker-item-outer-flex">
+                                        <div id="urendeclaraties-short-outer" class="medewerker-item-outer-flex">
                                             <div class="medewerkers-item-flex">
                                                 <div class="medewerkers-content-wrapper maand-wrapper">
                                                     <div class="paragraph-content">Februari</div>
@@ -373,8 +438,58 @@
 
             </div>
         </div>
-    </div>
-    <!--  JS LINKS HERE  -->
+            `;
+        document.getElementById("medewerker-app-wrapper").innerHTML = string1;
+        }
+        xhr.open("GET", "https://api.qienurenapp.privatedns.org:9100/api/gebruikers/me/", true);
+    xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
+    xhr.send();
+
+}
+
+    function laadUrendeclaraties() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            var inhoudDB = JSON.parse(this.responseText);
+            var string1 = ""
+            string1 += `
+            <div class="medewerkers-item-flex">
+                <div class="medewerkers-content-wrapper maand-wrapper">
+                    <div class="paragraph-content">Februari</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-name-wrapper">
+                    <div class="paragraph-content">BedrijfsnaamX</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-uren-wrapper">
+                    <div class="paragraph-content">160</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-uren-wrapper">
+                    <div class="paragraph-content">120</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-uren-wrapper">
+                    <div class="paragraph-content">20</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-uren-wrapper">
+                    <div class="paragraph-content">0</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-uren-wrapper">
+                    <div class="paragraph-content">20</div>
+                </div>
+                <div class="medewerkers-content-wrapper medewerker-uren-wrapper">
+                    <div class="paragraph-content">0</div>
+                </div>
+                <div class="medewerkers-content-wrapper status-wrapper">
+                    <div class="paragraph-content">Beschikbaar</div>
+                </div>
+            </div>
+            `;
+        document.getElementById("urendeclaraties-short-outer").innerHTML = string1;
+        }
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/medewerkers/5", true);
+    xhr.send();
+    }
+
+    </script>
     <script src="../js/qienapp.js" type="text/javascript"></script>
 </body>
 </html>

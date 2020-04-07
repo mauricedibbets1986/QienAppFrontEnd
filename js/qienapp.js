@@ -1,4 +1,42 @@
 // ============================ADMIN JS =============================
+var username = localStorage.qienusername;
+var password = localStorage.qienpassword;
+checkLogin();
+
+window.onload = function() {
+    laadMedewerkers();
+    laadOpdrachtgevers()
+}
+
+function checkLogin() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 'OK' || (xhr.status >= 200 && xhr.status < 400)) {
+                var inhoudDB = JSON.parse(this.responseText);
+                console.log("Ophalen gelukt");
+                if (inhoudDB.gebruikerType === "Medewerker") {
+                    console.log("Je bent een medewerker");
+                    alert("You are not logged in as an admin. Try to login as an admin");
+                    window.location.href = '../login.html';
+                } else if (inhoudDB.gebruikerType === "Admin") {
+                    console.log("Je bent een admin.");
+                } else {
+                    console.log("Geen idee wie je bent");
+                    alert("You are not logged in as an admin. Try to login as an admin");
+                    window.location.href = '../login.html';
+                }
+            } else {
+                console.log("VERSTUREN IS NIET GELUKT!");
+                alert("You are not logged in as an admin. Try to login as an admin");
+                window.location.href = '../login.html';
+            }
+        }
+    }
+    xhr.open("GET", "https://api.qienurenapp.privatedns.org:9100/api/gebruikers/me/", true);
+    xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
+    xhr.send();
+}
 
 // Active page
 if (window.location.href.indexOf("admin/dashboard") > -1) {
@@ -394,7 +432,7 @@ function AddMedewerkerLaadOpdrachtgeversSelect() {
         }
         document.getElementById("add-medewerker-opdrachtgever-select").innerHTML = string1;
     }
-    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100//api/opdrachtgevers/", true);
+    xhr.open("GET","https://api.qienurenapp.privatedns.org:9100/api/opdrachtgevers/", true);
     xhr.send();
 }
 
@@ -715,7 +753,7 @@ function addMedewerkertoDB(){
         laadMedewerkers();
         closeGebruikerPopup();
     }
-    xhr.open("PUT","https://api.qienurenapp.privatedns.org:9100//api/medewerkers/maakMedewerkerenKoppelOpdrachtgever/" + vWerkgeverId,true);
+    xhr.open("PUT","https://api.qienurenapp.privatedns.org:9100/api/medewerkers/maakMedewerkerenKoppelOpdrachtgever/" + vWerkgeverId,true);
     xhr.setRequestHeader("Content-type","application/json")
     xhr.send(abc);
  }
@@ -754,7 +792,7 @@ function addContactpersoonToDB(id){
         laadSingleOpdrachtgever(id)
         closeGebruikerPopup();
     }
-    xhr.open("POST","http://https://api.qienurenapp.privatedns.org:9100/api/contactpersonen/" + id, true);    // asynchroon betekent tegelijkertijd. Synchroon is afgestemd
+    xhr.open("POST","https://api.qienurenapp.privatedns.org:9100/api/contactpersonen/" + id, true);    // asynchroon betekent tegelijkertijd. Synchroon is afgestemd
     xhr.setRequestHeader("Content-type","application/json");
     xhr.send(json);
 }
@@ -798,13 +836,6 @@ function verwijderOpdrachtgever(id) {
     }
     xhr.send();
 }
-
-
-window.onload = function() {
-    laadMedewerkers();
-    laadOpdrachtgevers()
-}
-
 
 // change functies
 function changeMedewerker(id) {
